@@ -52,7 +52,7 @@ def grade_upload(submissions, gradebook):
             input_grade[students[entry[0]]] = {
                 "netid": entry[0],
                 "grade": float(entry[1].strip()),
-                "comments": entry[2].strip()
+                "comments": entry[2].strip().replace('$$$', ',')
             }
         except:
             logging.critical('Something critical happened for ' +
