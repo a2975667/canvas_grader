@@ -1,0 +1,6 @@
+settings.ini
+*.csv
+__pycache__
+.venv
+.vscode
+*.log
