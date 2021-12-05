@@ -1,7 +1,21 @@
 import argparse
 import configparser
 import logging
+import tqdm
+import time
 
+class TqdmLoggingHandler(logging.Handler):
+    def __init__(self, level=logging.NOTSET):
+        super().__init__(level)
+
+    def emit(self, record):
+        try:
+            msg = self.format(record)
+            tqdm.tqdm.write(msg)
+            time.sleep(0.05)
+            self.flush()
+        except Exception:
+            self.handleError(record)  
 
 def parse_input():
     parser = argparse.ArgumentParser(description='Canvas grader')
@@ -27,12 +41,5 @@ def setup_logger(assignment_id):
                         format='%(asctime)s,%(msecs)d %(name)s %(levelname)s %(message)s',
                         datefmt='%H:%M:%S',
                         level=logging.WARNING)
-    # define a Handler which writes INFO messages or higher to the sys.stderr
-    console = logging.StreamHandler()
-    console.setLevel(logging.WARNING)
-    # set a format which is simpler for console use
-    formatter = logging.Formatter('%(levelname)-8s %(message)s')
-    # tell the handler to use this format
-    console.setFormatter(formatter)
-    # add the handler to the root logger
-    logging.getLogger('').addHandler(console)
+    # adding tqdm logger to preserve pg bar at the bottom
+    logging.getLogger('').addHandler(TqdmLoggingHandler())
