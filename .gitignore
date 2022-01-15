@@ -4,4 +4,5 @@ __pycache__
 .venv
 .vscode
 *.log
-scripts
+scripts/*.csv
+scripts/*.py
