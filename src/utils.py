@@ -3,7 +3,6 @@ import configparser
 import logging
 import tqdm
 import time
-
 class TqdmLoggingHandler(logging.Handler):
     def __init__(self, level=logging.NOTSET):
         super().__init__(level)
@@ -18,12 +17,17 @@ class TqdmLoggingHandler(logging.Handler):
             self.handleError(record)  
 
 def parse_input():
-    parser = argparse.ArgumentParser(description='Canvas grader')
+    parser = argparse.ArgumentParser(
+        prog ='Canvas grader',
+        description='A script for batch grade and comment upload to Canvas LMS.')
     group = parser.add_mutually_exclusive_group()
     group.add_argument(
         "--list", "-l", help='list all assignments', action="store_true")
     group.add_argument("--grade", "-g", nargs=2,
                        metavar=('assignment_id', 'filepath'), help='grading mode')
+    group.add_argument("--batch_upload", "-u", help='upload batch file', nargs=1)
+    group.add_argument("--create_batch", "-b", help='create batch file', action="store_const", const=True)
+    
     # parser.add_argument("assignment_id", help='assignment ID')
     # parser.add_argument('filename', help='grade filename')
     return parser.parse_args()
