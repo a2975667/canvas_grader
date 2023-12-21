@@ -48,16 +48,34 @@ def grade_upload(submissions, gradebook):
         if entry[1].strip() == "":
             logging.warning(entry[0] + ' does not have a (valid) score. Assuming 0.')
             entry[1] = '0'
+        
         try:
+            # Attempt to parse as a float, which is valid for numeric grades
             input_grade[students[entry[0]]] = {
                 "netid": entry[0],
                 "grade": float(entry[1].strip()),
                 "comments": entry[2].strip().replace('$$$', ',')
             }
-        except:
-            logging.critical('Something critical happened for ' +
-                entry[0] + ': the entry is: ' + str(entry))
-
+        except ValueError:
+            non_numeric_grades = [
+                'A+', 'A', 'A-', 
+                'B+', 'B', 'B-', 
+                'C+', 'C', 'C-', 
+                'D+', 'D', 'D-', 
+                'F', 'Ex', 'EX'
+            ]
+            # Handle non-numeric grades
+            grade = entry[1].strip().upper()  # Convert grade to uppercase for uniformity
+            if grade in non_numeric_grades:
+                input_grade[students[entry[0]]] = {
+                    "netid": entry[0],
+                    "grade": grade,
+                    "comments": entry[2].strip().replace('$$$', ',')
+                }
+            else:
+                logging.critical('Something critical happened for ' +
+                                entry[0] + ': the entry is: ' + str(entry) +
+                                '. It might be uploading grades that are non-values that are not predefined in the system.')
     # writing to canvas
     logging.warning('Pushing updates to canvas...')
     for _, submission in tqdm(submissions.items()):
