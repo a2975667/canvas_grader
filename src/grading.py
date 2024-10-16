@@ -80,14 +80,19 @@ def grade_upload(submissions, gradebook):
     logging.warning('Pushing updates to canvas...')
     for _, submission in tqdm(submissions.items()):
         canvas_id = str(submission.user_id)
-        if canvas_id in input_grade:
-            record = input_grade[canvas_id]
-            upload_grade_with_comment(
-                submission, record['grade'], record['comments'])
-        else:
-            logging.warning('Cannot find grade for: ' +
-                            reversed_student[canvas_id])
-            upload_grade_with_comment(
-                submission, 0, ' cannot find submission.')
+        try:
+            if canvas_id in input_grade:
+                record = input_grade[canvas_id]
+                upload_grade_with_comment(
+                    submission, record['grade'], record['comments'])
+            else:
+                logging.warning('Cannot find grade for: ' +
+                                reversed_student[canvas_id])
+                upload_grade_with_comment(
+                    submission, 0, ' cannot find submission.')
+        except Exception as e:
+            logging.error('Error with the following submission: ')
+            logging.error(submission)
+            logging.error('You might want to recreate the student metadata file.')
 
     logging.warning('Done.')
